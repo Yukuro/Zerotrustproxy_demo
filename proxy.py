@@ -1,7 +1,6 @@
 import socket, sys
 import traceback
-from _thread import *
-#import threading
+import threading
 
 try:
     listening_port = int(input("[*] Enter Listening Port Number: "))
@@ -11,7 +10,7 @@ except KeyboardInterrupt:
     sys.exit()
 
 max_conn = 5
-buffer_size = 8192
+buffer_size = 4096
 
 def start():
     try:
@@ -30,20 +29,21 @@ def start():
         try:
             conn, addr = s.accept()
             data = conn.recv(buffer_size).decode('utf-8')
+
             # print("RECV: {}".format(data))
             if len(data) > 0 :
-                start_new_thread(conn_string, (conn,data,addr))
+                t = threading.Thread(target=conn_string, args=(conn,data,addr))
+                t.start()
         except KeyboardInterrupt:
             s.close()
             print("\n[*] Proxy Server Shutting Down ...")
-            print("[*] Have A Nice Day ... Sergeant !!!")
+            print("[*] Have A Nice Day ...")
             sys.exit(1)
     s.close()
 
 def conn_string(conn, data, addr):
     try:
         first_line = data.split('\n')[0]
-        # print(first_line)
 
         url = first_line.split(' ')[1]
 
