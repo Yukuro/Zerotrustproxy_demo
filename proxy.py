@@ -17,6 +17,7 @@ def start():
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.bind(('', listening_port))
         s.listen(max_conn)
+
         print("[*] Inisializing Sockets ... Done")
         print("[*] Sockets Binded Successfully ...")
         print("[*] Server Started Successfully [ {} ]\n".format(listening_port))
@@ -76,6 +77,10 @@ def proxy_server(webserver, port, conn, data, addr):
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((webserver, port))
+
+        # Print Debug data
+        print("PeerName:{}\nSocketName:{}\n".format(s.getpeername(), s.getsockname()))
+
         s.send(data.encode('utf-8'))
         print("DATA:{}\nSent.".format(data.encode('utf-8')))
 
